@@ -17,7 +17,6 @@ import datetime
 import decimal
 import ttcal
 from dkjason import jason
-DJANGO = jason.DJANGO
 
 
 def roundtrip(v):
@@ -38,7 +37,6 @@ def test_dumps():
     assert jason.dumps(decimal.Decimal('3.14159263')) == repr(float('3.14159263'))
 
 
-@pytest.mark.skipif(not DJANGO, reason="No django present")
 def test_jasonval():
     "Test the jasonval method."
     response = jason.jsonval(['Hei', 'Verden', '2012'])
@@ -90,7 +88,6 @@ def test_set_dumps():
         jason.dumps(Foo())  # not JSON serializable
     
 
-@pytest.mark.skipif(not DJANGO, reason="No django present")
 def test_dj_dumps():
     from django.contrib.auth.models import User
     assert jason.dumps(User.objects.none()) == '[]'
@@ -122,7 +119,6 @@ def test_jsonname():
     assert jsonname("hello.world") == "hello_world"
     
 
-@pytest.mark.skipif(not DJANGO, reason="No Django present")
 def test_response(rf):
     request = rf.get('/')
     r = response(request, 42)
@@ -135,7 +131,6 @@ def test_response(rf):
     assert r.content == b'cb(42)'
     
 
-@pytest.mark.skipif(not DJANGO, reason="No Django present")
 def test_jsonp():
     print("CONTENT:", jason.jsonp('cb', {'x':42}).content)
     # assert r'JSON.parse(val)}("{\"x\":42}")' in str(jason.jsonp('cb', {'x':42}).content)

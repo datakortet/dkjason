@@ -12,17 +12,12 @@ import json
 import collections
 import re
 
-DJANGO = TTCAL = True
-try:
-    from django import http
-    from django.db.models.query import QuerySet
-except ImportError:  # pragma: nocover
-    DJANGO = False
+from django import http
+from django.db.models.query import QuerySet
+import ttcal
 
-try:
-    import ttcal
-except ImportError:  # pragma: nocover
-    TTCAL = False
+DJANGO = True
+TTCAL = True
 
 # Call JSON.parse() if dk.jason.parse() is not available
 # (the re.sub() call removes all spaces, which is currently safe).
@@ -171,34 +166,33 @@ def jsonname(val):
     return val.replace('.', '_')
 
 
-if DJANGO:
-    def response(request, val, **kw):
-        """Return a json or jsonp response.
-        """
-        if request.GET.get('callback'):
-            return jsonp(request.GET['callback'], val, **kw)
-        else:
-            return jsonval(val, **kw)
+def response(request, val, **kw):
+    """Return a json or jsonp response.
+    """
+    if request.GET.get('callback'):
+        return jsonp(request.GET['callback'], val, **kw)
+    else:
+        return jsonval(val, **kw)
 
-    def jsonval(val, **kw):
-        """Serialize val to a json HTTP response.
-        """
-        data = dumps(val, **kw)
-        resp = http.HttpResponse(data, content_type='application/json')
-        resp['Content-Type'] = 'application/json; charset=UTF-8'
-        return resp
+def jsonval(val, **kw):
+    """Serialize val to a json HTTP response.
+    """
+    data = dumps(val, **kw)
+    resp = http.HttpResponse(data, content_type='application/json')
+    resp['Content-Type'] = 'application/json; charset=UTF-8'
+    return resp
 
-    def jsonp(callback, val, **kw):
-        """Serialization with json callback.
-        """
-        if _is_simpleval(val):
-            data = callback + '(%s)' % dump2(val, **kw)
-        else:
-            data = callback + '(%s(%s))' % (
-                _clientparsefn,
-                dump2(dump2(val, **kw)))
+def jsonp(callback, val, **kw):
+    """Serialization with json callback.
+    """
+    if _is_simpleval(val):
+        data = callback + '(%s)' % dump2(val, **kw)
+    else:
+        data = callback + '(%s(%s))' % (
+            _clientparsefn,
+            dump2(dump2(val, **kw)))
 
-        return http.HttpResponse(
-            data,
-            content_type='application/javascript; charset=utf-8'
-        )
+    return http.HttpResponse(
+        data,
+        content_type='application/javascript; charset=utf-8'
+    )
