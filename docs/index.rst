@@ -10,7 +10,7 @@
 API documentation
 =================
 
-.. include:: modules
+.. include:: ./modules.rst
 
 
 Indices and tables
