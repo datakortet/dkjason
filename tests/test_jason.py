@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 
-from dkdj.jason import jsonname, response
+from dkjason.jason import jsonname, response
 
 "core.jason"
 

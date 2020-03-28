@@ -1,0 +1,25 @@
+
+language: python
+
+sudo: false
+
+python:
+  - "2.7"
+  - "3.5"
+
+
+before_install:
+  - pip install -U pip
+  - pip install -U pytest
+  - pip install -U pytest-cov
+  - pip install -U coverage
+
+install:
+  - pip install -r requirements.txt
+  - pip install codecov
+
+script:
+  pytest -v --cov=dkjason tests
+
+after_success:
+  codecov
