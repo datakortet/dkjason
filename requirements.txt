@@ -23,6 +23,6 @@ pytest-forked==1.0.2
 pytest-xdist==1.26.1
 scandir==1.10.0
 six==1.14.0
-ttcal==1.0.6
+ttcal==1.0.5
 wcwidth==0.1.7
 zipp==0.6.0
