@@ -236,7 +236,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'dkjason', u'dkjason Documentation',
-   u'', 'dkjason', 'One line description of project.',
+   u'', 'dkjason', 'Helper module to send json encoded data from Python',
    'Miscellaneous'),
 ]
 
