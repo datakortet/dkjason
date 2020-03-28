@@ -4,7 +4,7 @@ dkjason - Helper module to send json encoded data from Python
 =============================================================
 
 This module knows how to serialize general object, objects specialized
-with a ``__django__()`` method, Django QuerySets, and ``ttcal`` objects.
+with a ``__json__()`` method, Django QuerySets, and ``ttcal`` objects.
 
 .. image:: https://gitlab.com/norsktest/dkjason/badges/master/pipeline.svg
    :target: https://gitlab.com/norsktest/dkjason/commits/master
