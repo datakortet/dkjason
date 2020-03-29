@@ -14,6 +14,6 @@ with a ``__json__()`` method, Django QuerySets, and ``ttcal`` objects.
    :target: https://dkjason.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation Status
 
-.. image:: https://codecov.io/gh/norsktest/dkjason/branch/master/graph/badge.svg?token=zmqdQHOX89
-   :target: https://codecov.io/gh/norsktest/dkjason
+.. image:: https://codecov.io/gh/datakortet/dkjason/branch/master/graph/badge.svg?token=zmqdQHOX89
+   :target: https://codecov.io/gh/datakortet/dkjason
 
