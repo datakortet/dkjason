@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 
+import collections
+import sys
+
 from dkjason.jason import jsonname, response
 
 "core.jason"
@@ -29,19 +32,29 @@ def test_jason_eval():
     assert roundtrip([])
     assert roundtrip(['hello world'])
     assert roundtrip(['hello world'.split()])
+    assert roundtrip({})
 
 
 def test_dumps():
     "Test the dumps function."
     assert jason.dumps(datetime.datetime(2012, 4, 2, 6, 12), indent=None) == '"@datetime:2012-04-02T06:12:00"'
     assert jason.dumps(decimal.Decimal('3.14159263')) == repr(float('3.14159263'))
+    assert jason.dumps({}.keys()) == '[]'
+    assert jason.dumps({}.values()) == '[]'
+    assert jason.dumps(range(0)) == '[]'
+
+
+@pytest.mark.skipif(sys.version_info.major == 2,
+                    reason="collections.abc requires python 3")
+def test_generator():
+    assert jason.dumps((i for i in range(0))) == '[]'
 
 
 def test_jasonval():
     "Test the jasonval method."
-    response = jason.jsonval(['Hei', 'Verden', '2012'])
-    print('response:', response)
-    r = str(response.content)
+    resp = jason.jsonval(['Hei', 'Verden', '2012'])
+    print('response:', resp)
+    r = str(resp.content)
     # print("CONTENT:", response.content)
     # print(dir(response))
     assert r.count('Hei') == 1
@@ -63,7 +76,7 @@ def test_class_dumps():
         def __init__(self):
             self.a = 42
 
-    assert jason.json_eval(jason.dumps(D())) == {"a":42}
+    assert jason.json_eval(jason.dumps(D())) == {"a": 42}
 
 
 def test_set_dumps():
@@ -86,9 +99,28 @@ def test_set_dumps():
     
     with pytest.raises(TypeError):
         jason.dumps(Foo())  # not JSON serializable
-    
 
-def test_dj_dumps():
+
+@pytest.mark.skipif(sys.version_info.major == 2,
+                    reason="collections.abc requires python 3")
+def test_mapping():
+    class Bar(collections.abc.Mapping):
+        __slots__ = ['a']
+
+        def __getitem__(self, item):  # pragma: nocover
+            pass
+
+        def __iter__(self):
+            return iter([])
+
+        def __len__(self):  # pragma: nocover
+            return 0
+
+    assert isinstance(Bar(), collections.abc.Mapping)
+    assert jason.dumps(Bar()) == "{}"
+
+    
+def test_django_queryset_dumps():
     from django.contrib.auth.models import User
     assert jason.dumps(User.objects.none()) == '[]'
 

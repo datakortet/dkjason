@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-
-"""Helper module to send json encoded data from Python.
-   (the misspelling is intentional ;-)
 """
-
+Helper module to send json encoded data from Python.
+(the misspelling is intentional ;-)
+"""
 # pylint:disable=E0202
+import sys
 import six
 import decimal
 import datetime
@@ -74,6 +74,13 @@ class DkJSONEncoder(json.JSONEncoder):
         if hasattr(obj, '__dict__'):
             return dict((k, v) for k, v in obj.__dict__.items()
                         if not k.startswith('_'))
+
+        if sys.version_info.major >= 3:
+            if isinstance(obj, collections.abc.Mapping):
+                return dict(obj)
+
+            if isinstance(obj, collections.abc.Iterable):
+                return list(obj)
 
         return super(DkJSONEncoder, self).default(obj)
 
@@ -174,6 +181,7 @@ def response(request, val, **kw):
     else:
         return jsonval(val, **kw)
 
+
 def jsonval(val, **kw):
     """Serialize val to a json HTTP response.
     """
@@ -181,6 +189,7 @@ def jsonval(val, **kw):
     resp = http.HttpResponse(data, content_type='application/json')
     resp['Content-Type'] = 'application/json; charset=UTF-8'
     return resp
+
 
 def jsonp(callback, val, **kw):
     """Serialization with json callback.
