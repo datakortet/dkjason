@@ -18,6 +18,7 @@ py35dj18:
 coverage:
   dependencies:
     - py27dj18
+    - py35dj18
 
 wheel:
   dependencies:
