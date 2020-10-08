@@ -151,6 +151,8 @@ def loads(txt, **kw):
     """
     if 'cls' not in kw:
         kw['object_pairs_hook'] = kw.get('object_pairs_hook', obj_decoder)
+    if isinstance(txt, bytes):
+        txt = txt.decode('u8')
     return json.loads(txt, **kw)
 
 
