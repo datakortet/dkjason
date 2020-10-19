@@ -5,6 +5,7 @@
 """
 
 # pylint:disable=E0202
+import sys
 import six
 import decimal
 import datetime
@@ -74,6 +75,11 @@ class DkJSONEncoder(json.JSONEncoder):
         if hasattr(obj, '__dict__'):
             return dict((k, v) for k, v in obj.__dict__.items()
                         if not k.startswith('_'))
+
+        if sys.version_info.major >= 3:
+            from collections.abc import KeysView, ValuesView
+            if isinstance(obj, (KeysView, ValuesView)):
+                return list(obj)
 
         return super(DkJSONEncoder, self).default(obj)
 
