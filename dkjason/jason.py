@@ -80,6 +80,8 @@ class DkJSONEncoder(json.JSONEncoder):
             from collections.abc import KeysView, ValuesView
             if isinstance(obj, (KeysView, ValuesView)):
                 return list(obj)
+            if isinstance(obj, bytes):
+                return obj.decode('u8')
 
         return super(DkJSONEncoder, self).default(obj)
 
