@@ -82,6 +82,9 @@ class DkJSONEncoder(json.JSONEncoder):
             if isinstance(obj, collections.abc.Iterable):
                 return list(obj)
 
+            if isinstance(obj, bytes):
+                return obj.decode('u8')
+
         return super(DkJSONEncoder, self).default(obj)
 
 
@@ -158,6 +161,8 @@ def loads(txt, **kw):
     """
     if 'cls' not in kw:
         kw['object_pairs_hook'] = kw.get('object_pairs_hook', obj_decoder)
+    if isinstance(txt, bytes):
+        txt = txt.decode('u8')
     return json.loads(txt, **kw)
 
 

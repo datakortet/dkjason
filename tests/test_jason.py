@@ -62,6 +62,12 @@ def test_jasonval():
     assert r.count('2012') == 1
 
 
+def test_dictviews():
+    a42 = dict(a=42)
+    assert jason.json_eval(jason.dumps(a42.keys())) == ['a']
+    assert jason.json_eval(jason.dumps(a42.values())) == [42]
+
+
 def test_class_dumps():
     """Test the dump of the jason value of a class by using
        the __jason__ method.
