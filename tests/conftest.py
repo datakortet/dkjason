@@ -11,13 +11,7 @@ def pytest_configure():
         DEBUG=True,
         TESTING=True,
         PRODUCTION=False,
-        DKCSRF_COOKIE_NAME="csrftoken",
         ROOT_URLCONF='urls',
-        # QMWISE={
-        #     'AFRURL': 'http://np.datakortet.intern/QMWISe5/QMWISe.asmx?wsdl&CustomerID=afr',
-        #     'NTURL': 'http://np.datakortet.intern/QMWISe5/QMWISe.asmx?wsdl&CustomerID=nt',
-        #     'DKURL': 'http://np.datakortet.intern/QMWISe5/QMWISe.asmx?wsdl&CustomerID=dk',
-        # },
         APPNAME='dkjason',
         CACHES={
             'default': {
@@ -41,17 +35,8 @@ def pytest_configure():
             }
         },
         INSTALLED_APPS=(
-            'django.contrib.admin',
             'django.contrib.auth',
-            'django.contrib.contenttypes',
-            'django.contrib.sessions',
-            'django.contrib.messages',
-            'django.contrib.staticfiles',
-            'django.contrib.sites',
-            'dkjason'
         ),
         AUTH_USER_MODEL='auth.User'
     )
     django.setup()
-    # from django.core.management import call_command
-    # call_command('syncdb', migrate=True, interactive=False)

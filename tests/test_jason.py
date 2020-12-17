@@ -42,6 +42,7 @@ def test_dumps():
     assert jason.dumps({}.keys()) == '[]'
     assert jason.dumps({}.values()) == '[]'
     assert jason.dumps(range(0)) == '[]'
+    assert jason.dumps(u'hello'.encode('u8')) == '"hello"'
 
 
 @pytest.mark.skipif(sys.version_info.major == 2,
@@ -150,6 +151,15 @@ def test_loads():
 
     val = u'{"k":42}'
     jval = jason.loads(val)
+    assert jval['k'] == 42
+
+    val = b'{"k":42}'
+    jval = jason.loads(val)
+    assert jval['k'] == 42
+
+    import json
+    val = b'{"k":42}'
+    jval = jason.loads(val, cls=json.JSONDecoder)
     assert jval['k'] == 42
     
     
