@@ -6,7 +6,8 @@ colorama==0.4.1
 configparser==4.0.2
 contextlib2==0.5.3
 coverage==4.4.1
-Django==1.8.19
+Django==1.8.19           ; python_version <= '3.5'
+Django==1.11.29          ; python_version > '3.5'
 execnet==1.6.0
 funcsigs==1.0.2
 future==0.18.1
