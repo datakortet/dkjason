@@ -23,7 +23,7 @@ setuptools.setup(
     name='dkjason',
     version=version,
     install_requires=[
-        "Django==1.8.19",
+        "Django==2.2.24",
         "ttcal",
     ],
     description=__doc__.strip(),
