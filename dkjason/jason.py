@@ -45,7 +45,7 @@ class DkJSONEncoder(json.JSONEncoder):
     """
 
     def default(self, obj):  # pylint:disable=R0911
-        
+
         if isinstance(obj, decimal.Decimal):
             return float(obj)
         if hasattr(obj, '__json__'):
@@ -82,7 +82,7 @@ class DkJSONEncoder(json.JSONEncoder):
 
             if isinstance(obj, bytes):  # pragma: no branch
                 return obj.decode('u8')
-            
+
             if isinstance(obj, collections.abc.Iterable):
                 return list(obj)
 
