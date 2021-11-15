@@ -4,24 +4,24 @@ Helper module to send json encoded data from Python.
 (the misspelling is intentional ;-)
 """
 # pylint:disable=E0202
-import sys
-import six
-import decimal
-import datetime
-import json
 import collections
+import datetime
+import decimal
+import json
 import re
 
+import six
 from django import http
 from django.db.models.query import QuerySet
 import ttcal
+
 
 DJANGO = True
 TTCAL = True
 
 # Call JSON.parse() if dk.jason.parse() is not available
 # (the re.sub() call removes all spaces, which is currently safe).
-_clientparsefn = re.sub(r'\s+', "", """
+CLIENT_PARSE_FN = re.sub(r'\s+', "", """
     function (val) {
         return (dk && dk.jason && dk.jason.parse) ?
             dk.jason.parse(val) : JSON.parse(val)
@@ -32,10 +32,10 @@ _clientparsefn = re.sub(r'\s+', "", """
 # Are we sending a simple value, i.e. values that don't need the double parse
 # required when sending '@type:__' encoded values?
 # Currently this only checks the top level of the value.
-def _is_simpleval(v):
-    if isinstance(v, six.integer_types) or isinstance(v, decimal.Decimal):
+def _is_simpleval(val):
+    if isinstance(val, (decimal.Decimal, six.integer_types)):
         return True
-    if isinstance(v, six.string_types) and not v.startswith('@'):
+    if isinstance(val, six.string_types) and not val.startswith('@'):
         return True
     return False
 
@@ -44,49 +44,48 @@ class DkJSONEncoder(json.JSONEncoder):
     """Handle special cases, like Decimal...
     """
 
-    def default(self, obj):  # pylint:disable=R0911
+    def default(self, o):  # pylint:disable=too-many-branches,too-many-return-statements
 
-        if isinstance(obj, decimal.Decimal):
-            return float(obj)
-        if hasattr(obj, '__json__'):
-            return obj.__json__()
-        if isinstance(obj, set):
-            return list(obj)
+        if isinstance(o, decimal.Decimal):
+            return float(o)
+        if hasattr(o, '__json__'):
+            return o.__json__()
+        if isinstance(o, set):
+            return list(o)
 
-        if isinstance(obj, ttcal.Year):
-            return dict(year=obj.year, kind='YEAR')
-        if isinstance(obj, ttcal.Duration):
-            return '@duration:%d' % obj.toint()
+        if isinstance(o, ttcal.Year):
+            return dict(year=o.year, kind='YEAR')
+        if isinstance(o, ttcal.Duration):
+            return '@duration:%d' % o.toint()
 
-        if isinstance(obj, datetime.datetime):
-            return '@datetime:%s' % obj.isoformat()
-        if isinstance(obj, datetime.date):
-            return '@date:%s' % obj.isoformat()
-        if isinstance(obj, datetime.time):
-            return dict(hour=obj.hour,
-                        minute=obj.minute,
-                        second=obj.second,
-                        microsecond=obj.microsecond,
+        if isinstance(o, datetime.datetime):
+            return '@datetime:%s' % o.isoformat()
+        if isinstance(o, datetime.date):
+            return '@date:%s' % o.isoformat()
+        if isinstance(o, datetime.time):
+            return dict(hour=o.hour,
+                        minute=o.minute,
+                        second=o.second,
+                        microsecond=o.microsecond,
                         kind="TIME")
 
-        if isinstance(obj, QuerySet):
-            return list(obj)
+        if isinstance(o, QuerySet):
+            return list(o)
 
-        if hasattr(obj, '__dict__'):
-            return dict((k, v) for k, v in obj.__dict__.items()
+        if hasattr(o, '__dict__'):
+            return dict((k, v) for k, v in o.__dict__.items()
                         if not k.startswith('_'))
 
-        if sys.version_info.major >= 3:  # pragma: no branch
-            if isinstance(obj, collections.abc.Mapping):
-                return dict(obj)
+        if isinstance(o, collections.abc.Mapping):
+            return dict(o)
 
-            if isinstance(obj, bytes):  # pragma: no branch
-                return obj.decode('u8')
+        if isinstance(o, bytes):  # pragma: no branch
+            return o.decode('u8')
 
-            if isinstance(obj, collections.abc.Iterable):
-                return list(obj)
+        if isinstance(o, collections.abc.Iterable):
+            return list(o)
 
-        return super(DkJSONEncoder, self).default(obj)
+        return super().default(o)
 
 
 def dumps(val, indent=4, sort_keys=True, cls=DkJSONEncoder):
@@ -104,7 +103,7 @@ def dump2(val, **kw):
     return json.dumps(val, **kw)
 
 
-datetime_re = re.compile(r'''
+DATETIME_RE = re.compile(r'''
     @datetime:
         (?P<year>\d{4})
         -(?P<mnth>\d\d?)
@@ -117,16 +116,22 @@ datetime_re = re.compile(r'''
 
 
 def obj_decoder(pairs):
-    def _get_tag(v):
-        if isinstance(v, six.text_type) and v.startswith('@'):
+    """Reverses values created by DkJSONEncoder.
+    """
+
+    def _get_tag(value):
+        """Return the tag part of val, if it exists.
+           Ie. @datetime:2021-11-15T12:15:47.1234 returns @datetime:
+        """
+        if isinstance(value, six.text_type) and value.startswith('@'):
             try:
-                v = str(v)
+                value = str(value)
             except UnicodeEncodeError:  # pragma: nocover
                 return None
             else:
-                if ':' not in v:
+                if ':' not in value:
                     return None
-                tag, val = v.split(':', 1)
+                tag, _val = value.split(':', 1)
                 return tag + ':'
         else:
             return None
@@ -136,8 +141,8 @@ def obj_decoder(pairs):
         tag = _get_tag(val)
         if tag and tag == '@datetime:':
             val = str(val)
-            m = datetime_re.match(val)
-            g = m.groupdict()
+            m = DATETIME_RE.match(val)  # pylint:disable=invalid-name
+            g = m.groupdict()           # pylint:disable=invalid-name
             val = datetime.datetime(
                 int(g['year']),
                 int(g['mnth']),
@@ -184,8 +189,7 @@ def response(request, val, **kw):
     """
     if request.GET.get('callback'):
         return jsonp(request.GET['callback'], val, **kw)
-    else:
-        return jsonval(val, **kw)
+    return jsonval(val, **kw)
 
 
 def jsonval(val, **kw):
@@ -204,7 +208,7 @@ def jsonp(callback, val, **kw):
         data = callback + '(%s)' % dump2(val, **kw)
     else:
         data = callback + '(%s(%s))' % (
-            _clientparsefn,
+            CLIENT_PARSE_FN,
             dump2(dump2(val, **kw)))
 
     return http.HttpResponse(
