@@ -1,24 +1,8 @@
 ttcal>=1.0.5       
-apipkg==1.5
-atomicwrites==1.2.1
-colorama==0.4.1
-configparser==4.0.2
-contextlib2==0.5.3
-coverage==5.5
 Django==1.8.19           ; python_version <= '3.5'
 Django==1.11.29          ; python_version > '3.5'
-execnet==1.6.0
-funcsigs==1.0.2
-future==0.18.1
-importlib-metadata==0.23
-more-itertools==5.0.0
-packaging==20.4
-pathlib2==2.3.4
-pyparsing==2.1.10
+
+coverage==5.5
 pytest>=4.6
 pytest-cov>=2.12.1
 pytest-django==3.10.0
-scandir==1.10.0
-six==1.15.0
-wcwidth==0.1.7          
-zipp==0.6.0             

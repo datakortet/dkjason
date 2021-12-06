@@ -9,14 +9,3 @@ tests:
 
 local:
   - ttcal
-
-unknown:
-  - apipkg==1.5
-  - configparser==4.0.2
-  - contextlib2==0.5.3
-  - execnet==1.6.0
-  - funcsigs==1.0.2
-  - future==0.18.1
-  - more-itertools==5.0.0
-  - scandir==1.10.0
-  - wcwidth==0.1.7          
