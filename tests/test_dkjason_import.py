@@ -4,6 +4,7 @@
 """
 
 import dkjason
+import dkjason.jason
 
 
 def test_import_dkjason():
@@ -11,3 +12,4 @@ def test_import_dkjason():
     """
     
     assert dkjason
+    assert dkjason.jason
