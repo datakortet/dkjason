@@ -27,9 +27,6 @@ def roundtrip(v):
     return jason.json_eval(jason.dumps(v)) == v
 
 
-def test_foo():
-    assert 0
-
 def test_jason_eval():
     "Test the jason_eval function using the roundtrip convenience function."
     assert roundtrip([])
