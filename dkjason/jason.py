@@ -14,6 +14,7 @@ import six
 from django import http
 from django.db.models.query import QuerySet
 import ttcal
+import numpy
 
 
 DJANGO = True
@@ -84,6 +85,9 @@ class DkJSONEncoder(json.JSONEncoder):
 
         if isinstance(o, collections.abc.Iterable):
             return list(o)
+
+        if isinstance(o, numpy.int64):
+            return float(o)
 
         return super().default(o)
 
