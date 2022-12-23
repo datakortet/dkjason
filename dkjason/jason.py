@@ -60,9 +60,9 @@ class DkJSONEncoder(json.JSONEncoder):
             return '@duration:%d' % o.toint()
 
         if isinstance(o, datetime.datetime):
-            return '@datetime:%s' % o.isoformat()
+            return f'@datetime:{o.isoformat()}'
         if isinstance(o, datetime.date):
-            return '@date:%s' % o.isoformat()
+            return f'@date:{o.isoformat()}'
         if isinstance(o, datetime.time):
             return dict(hour=o.hour,
                         minute=o.minute,
@@ -209,11 +209,9 @@ def jsonp(callback, val, **kw):
     """Serialization with json callback.
     """
     if _is_simpleval(val):
-        data = callback + '(%s)' % dump2(val, **kw)
+        data = callback + f'({dump2(val, **kw)})'
     else:
-        data = callback + '(%s(%s))' % (
-            CLIENT_PARSE_FN,
-            dump2(dump2(val, **kw)))
+        data = callback + f'({CLIENT_PARSE_FN}({dump2(dump2(val, **kw))}))'
 
     return http.HttpResponse(
         data,
