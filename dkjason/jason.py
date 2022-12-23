@@ -12,7 +12,12 @@ import re
 from django import http
 from django.db.models.query import QuerySet
 import ttcal
-import numpy
+
+try:
+    import numpy
+    NUMPY = True
+except ImportError:  # pragma: nocover
+    NUMPY = False
 
 
 DJANGO = True
@@ -30,7 +35,7 @@ CLIENT_PARSE_FN = re.sub(r'\s+', "", """
 
 # Are we sending a simple value, i.e. values that don't need the double parse
 # required when sending '@type:__' encoded values?
-# Currently this only checks the top level of the value.
+# Currently, this only checks the top level of the value.
 def _is_simpleval(val):
     if isinstance(val, (decimal.Decimal, int)):
         return True
@@ -84,8 +89,9 @@ class DkJSONEncoder(json.JSONEncoder):
         if isinstance(o, collections.abc.Iterable):
             return list(o)
 
-        if isinstance(o, numpy.int64):
-            return float(o)
+        if NUMPY:
+            if isinstance(o, numpy.int64):
+                return o.item()
 
         return super().default(o)
 

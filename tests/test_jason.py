@@ -1,19 +1,14 @@
-# -*- coding: utf-8 -*-
-from __future__ import print_function
+"core.jason"
 
 import collections
 import sys
 
-from dkjason.jason import jsonname, response
+from dkjason.jason import jsonname, response, NUMPY
 
-"core.jason"
-
-# pylint:disable=R0904, W0232, C0111, R0201, C0301
-# R0904: Too many public methods
-# W0232: [Class C. method __json__] Class has not __init__ method
-# C0111: [Class C. method __json__] Missing docstring
-# R0201: [Class C. method __json__] Method could be a function
-# C0301: Line is too long
+try:
+    import numpy as np
+except ImportError:  # pragma: nocover
+    pass
 
 import pytest
 import datetime
@@ -33,6 +28,11 @@ def test_jason_eval():
     assert roundtrip(['hello world'])
     assert roundtrip(['hello world'.split()])
     assert roundtrip({})
+
+
+if NUMPY:
+    def test_numpy_vals():
+        assert jason.loads(jason.dumps(np.int64(42))) == 42
 
 
 def test_dumps():
