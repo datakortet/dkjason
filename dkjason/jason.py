@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Helper module to send json encoded data from Python.
 (the misspelling is intentional ;-)
@@ -10,7 +9,6 @@ import decimal
 import json
 import re
 
-import six
 from django import http
 from django.db.models.query import QuerySet
 import ttcal
@@ -34,9 +32,9 @@ CLIENT_PARSE_FN = re.sub(r'\s+', "", """
 # required when sending '@type:__' encoded values?
 # Currently this only checks the top level of the value.
 def _is_simpleval(val):
-    if isinstance(val, (decimal.Decimal, six.integer_types)):
+    if isinstance(val, (decimal.Decimal, int)):
         return True
-    if isinstance(val, six.string_types) and not val.startswith('@'):
+    if isinstance(val, str) and not val.startswith('@'):
         return True
     return False
 
@@ -74,8 +72,8 @@ class DkJSONEncoder(json.JSONEncoder):
             return list(o)
 
         if hasattr(o, '__dict__'):
-            return dict((k, v) for k, v in o.__dict__.items()
-                        if not k.startswith('_'))
+            return {k: v for k, v in o.__dict__.items()
+                        if not k.startswith('_')}
 
         if isinstance(o, collections.abc.Mapping):
             return dict(o)
@@ -127,7 +125,7 @@ def obj_decoder(pairs):
         """Return the tag part of val, if it exists.
            Ie. @datetime:2021-11-15T12:15:47.1234 returns @datetime:
         """
-        if isinstance(value, six.text_type) and value.startswith('@'):
+        if isinstance(value, str) and value.startswith('@'):
             try:
                 value = str(value)
             except UnicodeEncodeError:  # pragma: nocover
