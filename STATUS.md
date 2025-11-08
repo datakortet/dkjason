@@ -37,8 +37,8 @@ Current status and metrics for the dkjason JSON serialization library.
 
 ### Python Support
 - **Minimum Required:** Python 3.x (implicit)
-- **Tested On:** Python 3.11.2
-- **Recommended:** Python 3.8+
+- **Tested On:** Python 3.10, 3.11, 3.12, 3.13 (via CI)
+- **Recommended:** Python 3.10+
 
 ---
 
@@ -49,7 +49,7 @@ Current status and metrics for the dkjason JSON serialization library.
 2. **Clean API** - Simple, intuitive function names
 3. **Django integration** - Native QuerySet support
 4. **Extensible** - `__json__()` method support for custom types
-5. **Working CI** - Travis CI configured (may need updating)
+5. **Working CI** - GitHub Actions configured with multi-version testing
 
 ### Weaknesses ⚠️
 1. **Security concerns** - JSONP support without proper validation
@@ -102,6 +102,7 @@ c:/srv/venv/dkjason311/Scripts/python.exe  # Python 3.11
 - [x] Created CLAUDE.md for AI assistance
 - [x] Created TODO.md with prioritized issues
 - [x] Created TASKS.md with concrete action items
+- [x] GitHub Actions CI/CD - Multi-version testing (Python 3.10-3.13, Django 2.2/3.2/4.2/5.2)
 
 ### In Progress 🔄
 - [ ] Security vulnerability assessment
@@ -111,9 +112,8 @@ c:/srv/venv/dkjason311/Scripts/python.exe  # Python 3.11
 ### Planned 📋
 - [ ] Type hints implementation
 - [ ] Modern packaging (pyproject.toml)
-- [ ] GitHub Actions CI/CD
 - [ ] API documentation with Sphinx
-- [ ] Django 4.x/5.x compatibility (2025)
+- [ ] Full Django 4.x/5.x compatibility verification
 
 ---
 
@@ -156,7 +156,9 @@ c:/srv/venv/dkjason311/Scripts/python.exe  # Python 3.11
 ### Compatibility Matrix
 | dkjason | Django | Python | Notes |
 |---------|--------|--------|-------|
-| 3.0.6 | 3.2 LTS | 3.6+ | Current (Django 3.2 until 2025) |
+| 3.0.6 | 3.2 LTS | 3.10 | Tested via CI |
+| 3.0.6 | 4.2 LTS | 3.10, 3.11, 3.12 | Tested via CI |
+| 3.0.6 | 5.2 | 3.10, 3.11, 3.12, 3.13 | Tested via CI |
 | 3.1.0 | 3.2 LTS | 3.8+ | Planned improvements |
 | 4.0.0 | 4.2/5.0+ | 3.10+ | Future (2025 upgrade) |
 
@@ -172,4 +174,4 @@ c:/srv/venv/dkjason311/Scripts/python.exe  # Python 3.11
 - **Repository:** Internal (needs GitHub migration?)
 - **Documentation:** README.rst (needs expansion)
 - **Tests:** `tests/` directory
-- **CI/CD:** Travis CI (needs updating)
+- **CI/CD:** GitHub Actions (`.github/workflows/ci.yml`) - Testing Python 3.10-3.13 with Django 2.2/3.2/4.2/5.2
