@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(test:*)",
+      "Bash(set DJANGO_SETTINGS_MODULE=)",
+      "Bash(/srv/venv/dkjason311/Scripts/pytest:*)",
+      "Bash(c:/srv/venv/dkjason311/Scripts/pytest -v --cov=dkjason tests)",
+      "Bash(/c/srv/venv/dkjason311/Scripts/pytest:*)",
+      "Bash(c:/srv/venv/dkjason311/Scripts/pip install:*)",
+      "Bash(echo:*)",
+      "Bash(DJANGO_SETTINGS_MODULE= c:/srv/venv/dkjason311/Scripts/pytest:*)",
+      "Bash(python -m py_compile:*)",
+      "Bash(python -c:*)",
+      "Bash(radon cc:*)",
+      "Bash(radon mi:*)",
+      "Bash(radon hal:*)",
+      "Bash(radon raw:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
