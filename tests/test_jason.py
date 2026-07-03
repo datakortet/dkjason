@@ -1,4 +1,4 @@
-"core.jason"
+"""Test module for dkjason serialization."""
 
 import collections
 import sys
@@ -103,7 +103,7 @@ def test_set_dumps():
     
     class Foo(object):
         __slots__ = ['a', 'b']
-    
+
     with pytest.raises(TypeError):
         jason.dumps(Foo())  # not JSON serializable
 
@@ -126,7 +126,7 @@ def test_mapping():
     assert isinstance(Bar(), collections.abc.Mapping)
     assert jason.dumps(Bar()) == "{}"
 
-    
+
 def test_django_queryset_dumps():
     from django.contrib.auth.models import User
     assert jason.dumps(User.objects.none()) == '[]'
@@ -161,23 +161,23 @@ def test_loads():
     val = b'{"k":42}'
     jval = jason.loads(val, cls=json.JSONDecoder)
     assert jval['k'] == 42
-    
-    
+
+
 def test_jsonname():
     assert jsonname("hello.world") == "hello_world"
-    
+
 
 def test_response(rf):
     request = rf.get('/')
     r = response(request, 42)
     assert r.status_code == 200
     assert r.content == b'42'
-    
+
     request = rf.get('/?callback=cb')
     r = response(request, 42)
     assert r.status_code == 200
     assert r.content == b'cb(42)'
-    
+
 
 def test_jsonp():
     print("CONTENT:", jason.jsonp('cb', {'x':42}).content)
@@ -187,4 +187,3 @@ def test_jsonp():
     assert jason.jsonp('cb', {'x':42}).content.startswith(b'cb(function(val){return(dk&&dk.jason&&dk.jason.parse)?dk.jason.parse(val):JSON.parse(val)}')
     assert jason.jsonp('cb', 42).content == b'cb(42)'
     assert jason.jsonp('cb', 'hello').content == b'cb("hello")'
-  

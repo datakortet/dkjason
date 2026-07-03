@@ -8,7 +8,5 @@ INSTALLED_APPS = [
     # 'dkdjango',
     # 'sekizai',
     'django.contrib.staticfiles',
-    
     'dkjason',
 ]
-
