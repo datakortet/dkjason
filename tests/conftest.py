@@ -1,10 +1,17 @@
-# -*- coding: utf-8 -*-
 import os
+try:
+    import django
+    HAVE_DJANGO = True
+except ImportError:
+    HAVE_DJANGO = False
 
 DIRNAME = os.path.dirname(__file__)
 
 
+
 def pytest_configure():
+    if not HAVE_DJANGO:
+        return
     import django
     from django.conf import settings
     settings.configure(

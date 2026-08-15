@@ -9,9 +9,19 @@ import decimal
 import json
 import re
 
-from django import http
-from django.db.models.query import QuerySet
-import ttcal
+try:
+    import django
+    from django import http
+    from django.db.models.query import QuerySet
+    DJANGO = True
+except ImportError:  # pragma: nocover
+    DJANGO = False
+
+try:
+    import ttcal
+    TTCAL = True
+except ImportError:  # pragma: nocover
+    TTCAL = False
 
 try:
     import numpy
@@ -19,9 +29,6 @@ try:
 except ImportError:  # pragma: nocover
     NUMPY = False
 
-
-DJANGO = True
-TTCAL = True
 
 # Call JSON.parse() if dk.jason.parse() is not available
 # (the re.sub() call removes all spaces, which is currently safe).
@@ -57,10 +64,11 @@ class DkJSONEncoder(json.JSONEncoder):
         if isinstance(o, set):
             return list(o)
 
-        if isinstance(o, ttcal.Year):
-            return dict(year=o.year, kind='YEAR')
-        if isinstance(o, ttcal.Duration):
-            return '@duration:%d' % o.toint()
+        if TTCAL:
+            if isinstance(o, ttcal.Year):
+                return dict(year=o.year, kind='YEAR')
+            if isinstance(o, ttcal.Duration):
+                return '@duration:%d' % o.toint()
 
         if isinstance(o, datetime.datetime):
             return f'@datetime:{o.isoformat()}'
@@ -73,8 +81,9 @@ class DkJSONEncoder(json.JSONEncoder):
                         microsecond=o.microsecond,
                         kind="TIME")
 
-        if isinstance(o, QuerySet):
-            return list(o)
+        if DJANGO:
+            if isinstance(o, QuerySet):
+                return list(o)
 
         if hasattr(o, '__dict__'):
             return {k: v for k, v in o.__dict__.items()
@@ -192,32 +201,33 @@ def jsonname(val):
     return val.replace('.', '_')
 
 
-def response(request, val, **kw):
-    """Return a json or jsonp response.
-    """
-    if request.GET.get('callback'):
-        return jsonp(request.GET['callback'], val, **kw)
-    return jsonval(val, **kw)
+if DJANGO:
+    def response(request, val, **kw):
+        """Return a json or jsonp response.
+        """
+        if request.GET.get('callback'):
+            return jsonp(request.GET['callback'], val, **kw)
+        return jsonval(val, **kw)
 
 
-def jsonval(val, **kw):
-    """Serialize val to a json HTTP response.
-    """
-    data = dumps(val, **kw)
-    resp = http.HttpResponse(data, content_type='application/json')
-    resp['Content-Type'] = 'application/json; charset=UTF-8'
-    return resp
+    def jsonval(val, **kw):
+        """Serialize val to a json HTTP response.
+        """
+        data = dumps(val, **kw)
+        resp = http.HttpResponse(data, content_type='application/json')
+        resp['Content-Type'] = 'application/json; charset=UTF-8'
+        return resp
 
 
-def jsonp(callback, val, **kw):
-    """Serialization with json callback.
-    """
-    if _is_simpleval(val):
-        data = callback + f'({dump2(val, **kw)})'
-    else:
-        data = callback + f'({CLIENT_PARSE_FN}({dump2(dump2(val, **kw))}))'
+    def jsonp(callback, val, **kw):
+        """Serialization with json callback.
+        """
+        if _is_simpleval(val):
+            data = callback + f'({dump2(val, **kw)})'
+        else:
+            data = callback + f'({CLIENT_PARSE_FN}({dump2(dump2(val, **kw))}))'
 
-    return http.HttpResponse(
-        data,
-        content_type='application/javascript; charset=utf-8'
-    )
+        return http.HttpResponse(
+            data,
+            content_type='application/javascript; charset=utf-8'
+        )

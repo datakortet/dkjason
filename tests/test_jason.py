@@ -3,17 +3,27 @@
 import collections
 import sys
 
-from dkjason.jason import jsonname, response, NUMPY
+from dkjason.jason import jsonname, DJANGO, NUMPY
+
+try:
+    from dkjason.jason import response
+except ImportError:
+    pass
 
 try:
     import numpy as np
 except ImportError:  # pragma: nocover
     pass
 
+try:
+    import ttcal
+    HAVE_TTCAL = True
+except ImportError:  # pragma: nocover
+    HAVE_TTCAL = False
+
 import pytest
 import datetime
 import decimal
-import ttcal
 from dkjason import jason
 
 
@@ -51,16 +61,17 @@ def test_generator():
     assert jason.dumps((i for i in range(0))) == '[]'
 
 
-def test_jasonval():
-    "Test the jasonval method."
-    resp = jason.jsonval(['Hei', 'Verden', '2012'])
-    print('response:', resp)
-    r = str(resp.content)
-    # print("CONTENT:", response.content)
-    # print(dir(response))
-    assert r.count('Hei') == 1
-    assert r.count('Verden') == 1
-    assert r.count('2012') == 1
+if DJANGO:
+    def test_jasonval():
+        "Test the jasonval method."
+        resp = jason.jsonval(['Hei', 'Verden', '2012'])
+        print('response:', resp)
+        r = str(resp.content)
+        # print("CONTENT:", response.content)
+        # print(dir(response))
+        assert r.count('Hei') == 1
+        assert r.count('Verden') == 1
+        assert r.count('2012') == 1
 
 
 def test_dictviews():
@@ -90,8 +101,9 @@ def test_set_dumps():
     assert jason.json_eval(jason.dumps(1)) == 1
     assert jason.json_eval(jason.dumps(set())) == []
     assert jason.json_eval(jason.dumps({1, 2})) == [1, 2]
-    assert jason.json_eval(jason.dumps(ttcal.Year(2017))) == {'year': 2017, 'kind': 'YEAR'}
-    assert jason.dumps(ttcal.Duration.parse('1:10:01')) == '"@duration:4201"'
+    if HAVE_TTCAL:
+        assert jason.json_eval(jason.dumps(ttcal.Year(2017))) == {'year': 2017, 'kind': 'YEAR'}
+        assert jason.dumps(ttcal.Duration.parse('1:10:01')) == '"@duration:4201"'
     assert jason.dumps(datetime.date(2019, 3, 15)) == '"@date:2019-03-15"'
     assert jason.json_eval(jason.dumps(datetime.time(hour=1, minute=10, second=1))) == {
         'hour': 1,
@@ -128,6 +140,10 @@ def test_mapping():
 
 
 def test_django_queryset_dumps():
+    try:
+        import django
+    except ImportError:
+        pytest.skip("Django not installed")
     from django.contrib.auth.models import User
     assert jason.dumps(User.objects.none()) == '[]'
 
@@ -167,23 +183,23 @@ def test_jsonname():
     assert jsonname("hello.world") == "hello_world"
 
 
-def test_response(rf):
-    request = rf.get('/')
-    r = response(request, 42)
-    assert r.status_code == 200
-    assert r.content == b'42'
+if DJANGO:
+    def test_response(rf):
+        request = rf.get('/')
+        r = response(request, 42)
+        assert r.status_code == 200
+        assert r.content == b'42'
 
-    request = rf.get('/?callback=cb')
-    r = response(request, 42)
-    assert r.status_code == 200
-    assert r.content == b'cb(42)'
+        request = rf.get('/?callback=cb')
+        r = response(request, 42)
+        assert r.status_code == 200
+        assert r.content == b'cb(42)'
 
-
-def test_jsonp():
-    print("CONTENT:", jason.jsonp('cb', {'x':42}).content)
-    # assert r'JSON.parse(val)}("{\"x\":42}")' in str(jason.jsonp('cb', {'x':42}).content)
-    # assert 'cb(42)' in str(jason.jsonp('cb', 42).content)
-    
-    assert jason.jsonp('cb', {'x':42}).content.startswith(b'cb(function(val){return(dk&&dk.jason&&dk.jason.parse)?dk.jason.parse(val):JSON.parse(val)}')
-    assert jason.jsonp('cb', 42).content == b'cb(42)'
-    assert jason.jsonp('cb', 'hello').content == b'cb("hello")'
+    def test_jsonp():
+        print("CONTENT:", jason.jsonp('cb', {'x':42}).content)
+        # assert r'JSON.parse(val)}("{\"x\":42}")' in str(jason.jsonp('cb', {'x':42}).content)
+        # assert 'cb(42)' in str(jason.jsonp('cb', 42).content)
+        
+        assert jason.jsonp('cb', {'x':42}).content.startswith(b'cb(function(val){return(dk&&dk.jason&&dk.jason.parse)?dk.jason.parse(val):JSON.parse(val)}')
+        assert jason.jsonp('cb', 42).content == b'cb(42)'
+        assert jason.jsonp('cb', 'hello').content == b'cb("hello")'
