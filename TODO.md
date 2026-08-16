@@ -2,7 +2,7 @@
 
 This document tracks improvements needed for the dkjason JSON serialization library.
 
-**Last Updated:** 2025-11-08
+**Last Updated:** 2026-08-17
 **Total Issues:** 31 (7 High, 15 Medium, 9 Low)
 
 ---
@@ -62,7 +62,7 @@ This document tracks improvements needed for the dkjason JSON serialization libr
   - Remove commented datetime parsing code
   - If needed for reference, move to documentation
 
-- [ ] **Improve test coverage to 100%**
+- [ ] **Improve test coverage to 100%** (97.66% currently)
   - Add test for numpy not installed case (line 92-94)
   - Remove or update Python 2 skip decorators in tests
   - Fix commented assertions in test_jsonp
@@ -178,6 +178,11 @@ This document tracks improvements needed for the dkjason JSON serialization libr
 ---
 
 ## 📊 Issue Summary
+
+### Completed maintenance
+
+- [x] Restore the authoritative package harness dependencies.
+- [x] Enforce a branch-aware 83% Python coverage threshold.
 
 | Priority | Count | Status |
 |----------|-------|--------|

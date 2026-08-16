@@ -5,6 +5,9 @@ branch = True
 
 
 [report]
+fail_under = 83
+precision = 2
+
 ;; Regexes for lines to exclude from consideration
 exclude_lines =
     ;; Have to re-enable the standard pragma

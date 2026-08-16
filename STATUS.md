@@ -2,7 +2,7 @@
 
 Current status and metrics for the dkjason JSON serialization library.
 
-**Last Updated:** 2025-11-08
+**Last Updated:** 2026-08-17
 **Version:** 3.0.6
 
 ---
@@ -22,7 +22,8 @@ Current status and metrics for the dkjason JSON serialization library.
 ## 📊 Current Metrics
 
 ### Code Quality
-- **Test Coverage:** 99% (1 line missing coverage)
+- **Test Coverage:** 97.66% combined statement/branch coverage
+- **Coverage Gate:** 83% (enforced by coverage.py)
 - **Tests Passing:** 15/15 (100%)
 - **Code Lines:** ~224 (main module)
 - **Test Lines:** ~191
@@ -45,11 +46,12 @@ Current status and metrics for the dkjason JSON serialization library.
 ## 🔍 Code Health
 
 ### Strengths ✅
-1. **Good test coverage** - 99% coverage with comprehensive tests
+1. **Good test coverage** - 97.66% branch-aware coverage with an 83% gate
 2. **Clean API** - Simple, intuitive function names
 3. **Django integration** - Native QuerySet support
 4. **Extensible** - `__json__()` method support for custom types
 5. **Working CI** - GitHub Actions configured with multi-version testing
+6. **Package harness** - `dk testpackage` passes locally
 
 ### Weaknesses ⚠️
 1. **Security concerns** - JSONP support without proper validation
