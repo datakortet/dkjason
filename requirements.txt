@@ -1,7 +1,5 @@
-numpy==2.4.4                   ; python_version < '3.12'
-numpy==2.5.2                   ; python_version >= '3.12'
-six==1.16.0                    ; python_version < '3.12'
-six==1.17.0                    ; python_version >= '3.12'
+numpy==2.5.2
+six==1.17.0
 pytest-django==4.14.0
 -e ../../core/ttcal
 
