@@ -13,30 +13,9 @@ jobs:
       # Let every cell finish, so one failure doesn't hide the state of the rest.
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12", "3.13"]
-        # Currently targeting Django 3.2 LTS
-        # Will expand to 4.x/5.x in 2025
-        django-version: ["2.2", "3.2", "4.2", "5.2"]
-        # django-version: ["2.2", "3.2", "4.2"]
-        exclude:
-          # Django 2.2 requires Python <= 3.9, so exclude all Python 3.10+
-          - python-version: "3.11"
-            django-version: "2.2"
-          - python-version: "3.12"
-            django-version: "2.2"
-          - python-version: "3.13"
-            django-version: "2.2"
-          # Django 3.2 requires Python <= 3.10, so exclude Python 3.11+
-          - python-version: "3.11"
-            django-version: "3.2"
-          - python-version: "3.12"
-            django-version: "3.2"
-          - python-version: "3.13"
-            django-version: "3.2"
-          # Django 4.2 requires Python <= 3.12, so exclude Python 3.13
-          - python-version: "3.13"
-            django-version: "4.2"
-        
+        python-version: ["3.13", "3.14"]
+        # Django 5.2 LTS: what production runs since hop 6 (2026-11-19)
+        django-version: ["5.2"]
 
     steps:
     - uses: actions/checkout@v4
